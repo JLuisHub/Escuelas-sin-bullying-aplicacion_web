@@ -21,10 +21,9 @@ class Estudiantes extends Model
             $estudiante->Nombre = rtrim(ltrim($dato_docente[1]));
             $estudiante->Apaterno = rtrim(ltrim($dato_docente[2]));
             $estudiante->Amaterno = rtrim(ltrim($dato_docente[3]));
-            $estudiante->Contrasenia = Hash::make(rtrim(ltrim($dato_docente[4])));
-            $dato = str_replace('/','', rtrim(ltrim($dato_docente[5])));
+            $dato = str_replace('/','', rtrim(ltrim($dato_docente[4])));
             $estudiante->FechaNac = str_replace('-','', $dato);
-            $estudiante->clave = rtrim(ltrim($dato_docente[6]));
+            $estudiante->clave = rtrim(ltrim($dato_docente[5]));
             $estudiante->save();
         }
         return "Se han guardado exitosamente los registros.";
