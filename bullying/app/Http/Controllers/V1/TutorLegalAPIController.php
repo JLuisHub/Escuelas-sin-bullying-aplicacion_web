@@ -21,7 +21,9 @@ class TutorLegalAPIController extends Controller
         if( empty($tutor_legal[0]) ){ // Id de tutor invalido
             return response()->json( ['message' => 'El tutor no existe.' ], 400);
         }
-        $alumno = DB::table('estudiantes')->where('FechaNac',$request->FechaNac)
+        $datos = str_replace('/','', rtrim(ltrim($request->FechaNac)));
+        $fecha_nacimiento = str_replace('-','', rtrim(ltrim($datos)));
+        $alumno = DB::table('estudiantes')->where('FechaNac',$fecha_nacimiento)
         ->where('Matricula',$request->matricula)->where('clave',$request->clave)->get();
         if(empty($alumno[0]) ){ // Id de alumno invalido
             return response()->json( ['message' => 'El alumno no existe.' ], 400);

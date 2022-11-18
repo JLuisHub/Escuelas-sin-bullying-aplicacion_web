@@ -19,7 +19,6 @@ class CreateEstudiantesTable extends Migration
             $table->string('Nombre');
             $table->string('Apaterno');
             $table->string('Amaterno');
-            $table->string('Contrasenia');
             $table->string('FechaNac');
             $table->string('clave');
             $table->foreign('clave')->references("clave")->on("users");
