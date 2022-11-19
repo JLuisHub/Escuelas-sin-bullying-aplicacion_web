@@ -15,28 +15,42 @@ class ReporteController extends Controller
 {
     public function index()
     {
+
+        //Se obtienen todo los reportes generados por todos los profesores que sean de la escuela
         $reportes = DB::table('reportes')
         ->join('docentes', 'reportes.id_docente', '=', 'docentes.id')
         ->where('docentes.clave', Auth::user()->clave)
         ->orderBy('fecha', 'desc')
         ->get();
+
+        //Contador de numero de reportes
         $contador = 0;
-        $datos = [];
+
+        //Arreglo de reportes
+        $arrayReportes = [];
+
+        //
         foreach($reportes as $reporte){
+            //Obtener el estudiante al que se le hizo un reporte
             $estudiante = DB::table('estudiantes')->where('id', $reporte->id_estudiante)->get()->first();
+           
+            //Crear arreglo con los datos de un reporte
             $reporteT= array(
                 "Docente"=> $reporte->Nombre." ".$reporte->Apaterno." ".$reporte->Amaterno,
                 "Alumno"=> $estudiante->Nombre." ".$estudiante->Apaterno." ".$estudiante->Amaterno,
                 "Descripcion"=> $reporte->descripcion,
                 "Fecha"=> $reporte->fecha
             );
-            $datos[$contador]=$reporteT;
+
+            // Almacenar el reporte y aumentar la cantidad
+            $arrayReportes[$contador]=$reporteT;
             $contador+=1;
         }
+
         $dato['titulo']='Reportes';
         $dato['tipo']='reportes';
-        $dato['contenido']=$datos;
-        $dato['cantidad']=count($datos);
+        $dato['contenido']=$arrayReportes;
+        $dato['cantidad']=count($arrayReportes);
         //return $dato['contenido'];
         return view('reporte_citatorio.plantilla', $dato);
     }
