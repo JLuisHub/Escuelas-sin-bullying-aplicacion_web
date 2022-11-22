@@ -18,30 +18,45 @@ use Illuminate\Support\Facades\Hash;
 class AuthTutorLegalController extends Controller
 {
 
+    public function index()
+    {
+        return view('TutorLegal.registra');
+    }
+
+    public function create()
+    {
+        // Hace llamar al template para registrar tutores legales
+        return view('TutorLegal.registra');
+    }
+
+
     //  Función que utilizaremos para registrar al usuario
-    public function register(Request $request)
+    public function store(Request $request)
     {
         //  Indicamos que solo queremos recibir email y password de la request
         $data = $request->only('email', 'nombre','aPaterno','aMaterno','password','passwordConfirm');
 
         //  Realizamos las validaciones
         //  Se valida que el email no haya sido introducido anteriormente por un docente o directivo.
+        
         $validator = Validator::make($data, [
-            'nombre' => 'required',
-            'aPaterno' => 'required',
-            'aMaterno' => 'required',
-            'email' => 'required|email|unique:tutores_legales|unique:users|unique:docentes',
             'password' => 'required|string|min:6|max:50',
             'passwordConfirm' => 'required|string|min:6|max:50',
         ]);
 
-        //  Devolvemos un error si fallan las validaciones
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->messages(), 'status' => Response::HTTP_BAD_REQUEST]);
+        if(strlen($request->password)<6 and strlen($request->passwordConfirm)<6){
+            return back()->withErrors([
+                'error'=>
+                'Las contraseñas deben de tener una longitud mínima de 6 caracteres.'
+            ]);
         }
 
+
         if( $request->password != $request->passwordConfirm ){
-            return response()->json(['error' => 'Las contraseñas proporcionadas no son iguales.','status' => Response::HTTP_BAD_REQUEST]);
+            return back()->withErrors([
+                'error'=>
+                $request->password.' '.$request->passwordConfirm 
+            ]);
         }
 
         try{
@@ -55,17 +70,20 @@ class AuthTutorLegalController extends Controller
             ]);
 
         } catch (Exeption $e){
-            return response()->json(['error' => 'Ha ocurrido un error al momento de registrar la cuenta.','status' => 500]);
+            return back()->withErrors([
+                'error'=>
+                'Ha ocurrido un error al momento de registrar la cuenta.'
+            ]);
         }
         
         //Nos guardamos el usuario y la contraseña para realizar la petición de token a JWTAuth
         $credentials = $request->only('email', 'password');
 
         //Devolvemos la respuesta con el token del usuario
-        return response()->json([
-            'message' => 'La cuenta se ha registrado exitosamente.',
-            'status' => Response::HTTP_OK
-        ]);
+        return back()->withErrors([
+                'error'=>
+                'La cuenta se ha registrado exitosamente.'
+            ]);
     }
 
     public function authenticate(Request $request)

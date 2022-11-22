@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EstudiantesController;
 use App\Http\Controllers\ReporteController;
+use App\Http\Controllers\V1\AuthTutorLegalController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -35,9 +36,9 @@ Route::resource('citatorios','App\Http\Controllers\CitatorioController');
 Route::resource('docentes/reportes','App\Http\Controllers\DocentesController');
 
 // Ruta para mostrar la pagina de registro al tutor legal
-Route::get('/tutor_legal/register_view', function(){
-    return view('TutorLegal.registro');
-});
+
+
+Route::resource('tutor_legal/registro', 'App\Http\Controllers\V1\AuthTutorLegalController');
 
 Route::get('docentes/reportes/{id}',[DocentesController::class,'show']);
 Route::get('estudiantes/reportes/{id}',[EstudiantesController::class,'show']);
