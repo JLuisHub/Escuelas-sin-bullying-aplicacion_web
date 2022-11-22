@@ -12,4 +12,18 @@ if( !function_exists('existe_estudiante')){
     }
 }
 
+if( !function_exists('pertenece_escuela_alumno')){
+    
+    function pertenece_escuela_alumno($datos){
+        $clave_escuela = Auth::user()->clave;
+        $clave_filtrada = explode("\n",$datos[5]);
+        $clave_registrar =$clave_filtrada[0];
+        if($clave_escuela == trim($clave_registrar)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+}
+
 ?>

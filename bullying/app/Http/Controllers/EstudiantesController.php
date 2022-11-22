@@ -94,7 +94,7 @@ class EstudiantesController extends Controller
                     ]);
                 }else{
                     if(!existe_estudiante($columnas)){
-                        if(pertenece_escuela($columnas)){
+                        if(pertenece_escuela_alumno($columnas)){
                             $datos[$i]=$columnas;
                         }else{
                             return back()->withErrors([
