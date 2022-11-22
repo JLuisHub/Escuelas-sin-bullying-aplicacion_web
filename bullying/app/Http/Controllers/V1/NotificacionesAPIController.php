@@ -39,7 +39,7 @@ class NotificacionesAPIController extends Controller
         return response() -> json($notificaciones);
     }
 
-    public function getNotificacionesAlumno($id){
+    public function getNotificacionesReporte($id){
         if($id==null){
             return response()->json([
                     'message' => 'Ha surgido un error, no se pueden obtener las notificaciones.',
@@ -65,6 +65,25 @@ class NotificacionesAPIController extends Controller
             $notificaciones[$cont]=$not;
             $cont+=1;
         }
+        return response() -> json($notificaciones);
+    }
+
+
+    public function getNotificacionesCitatorio($id){
+        if($id==null){
+            return response()->json([
+                    'message' => 'Ha surgido un error, no se pueden obtener las notificaciones.',
+                ], 400);
+        }
+        $estudiante = DB::table('estudiantes')->where('id',$id)->get();
+        if(empty($estudiante[0]) or $estudiante== null){
+            return response()->json([
+                    'message' => 'El alumno no se encuentra registrado.',
+                ], 400);
+        }
+
+        $notificaciones = [];
+        $cont = 0;
         $citatorio = DB::table('citatorios')->where('id_estudiante',$id)->get();
         foreach($citatorio as $cit){
             $not= array(

@@ -48,8 +48,6 @@ Route::prefix('v1')->group(function () {
     Route::put("docente/cambio_contrasenia", [DocentesAPIController::class,'cambiarContrasenia'] );
     Route::delete("docente/reporte/{id_reporte}",[ReporteAPIController::class,'destroy']);
     Route::delete("docente/citatorio_eliminar/{id_citatorio}",[CitatorioAPIController::class,'destroy']);
-
-
     Route::get('reportes/estudiante/{id}',[ReporteAPIController::class,'showEstudiante']); // pendiente
 
 
@@ -59,7 +57,8 @@ Route::prefix('v1')->group(function () {
     Route::post('tutor_legal/logout', [AuthTutorLegalController::class, 'logout']);
     Route::get('tutor_legal/citatorio_detalle/{id}',[CitatorioAPIController::class,'showCitatorio']);
     Route::get('tutor_legal/notificaciones/{id_tutor_legal}',[NotificacionesAPIController::class,'getNotificaciones']);
-    Route::get('tutor_legal/notificacionesA/{id}',[NotificacionesAPIController::class,'getNotificacionesAlumno']);
+    Route::get('tutor_legal/notificacionesReporte/{id}',[NotificacionesAPIController::class,'getNotificacionesReporte']);
+    Route::get('tutor_legal/notificacionesCitatorio/{id}',[NotificacionesAPIController::class,'getNotificacionesCitatorio']);
     Route::post("tutor_legal/vincular", [TutorLegalAPIController::class,'store'] );
     Route::post('tutor_legal_docente/login', [AuthTutorLegalAndDocenteController::class, 'authenticate']);
     Route::get("tutor_legal/tutorados/{id_tutor_legal}", [TutorLegalAPIController::class,'showAll'] );
