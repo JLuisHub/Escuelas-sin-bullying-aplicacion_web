@@ -86,9 +86,9 @@ class EstudiantesController extends Controller
                         $contador +=1;
                     }
                 }
-                if($bol and $contador==7){
+                if($bol and $contador==6){
                     //no se hace nada
-                }else if($bol and $contador <7){
+                }else if($bol and $contador <6){
                     return back()->withErrors([
                         'error' => "Hay columnas vacías en los registros, revise que todos los datos esten completos e intente nuevamente."
                     ]);
