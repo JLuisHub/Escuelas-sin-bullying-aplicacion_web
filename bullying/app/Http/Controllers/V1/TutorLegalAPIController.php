@@ -8,6 +8,8 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\EstudianteTutorLegal;
+use Illuminate\Support\Facades\Validator;
+
 
 class TutorLegalAPIController extends Controller
 {
@@ -60,5 +62,38 @@ class TutorLegalAPIController extends Controller
             $cantidad+=1;
         }
         return response()->json($tutorados);
+    }
+
+    public function deleteStudent($id_tutor_legal,$id_estudiante)
+    {
+        try{
+            $data = array(
+                'id_tutor_legal' => $id_tutor_legal,
+                'id_estudiante' => $id_estudiante,
+            );
+            //Validamos que los ids sean numeros
+            $validator = Validator::make($data, [
+                'id_tutor_legal' => 'numeric',
+                'id_estudiante' => 'numeric',
+            ]);
+    
+            //  Devolvemos un error si fallan las validaciones
+            if ($validator->fails()) {
+                return response()->json(['message' => $validator->messages(), 'status' => Response::HTTP_BAD_REQUEST]);
+            }
+            
+
+            $alumnoEliminado = DB::table('estudiantes_tutores_legales')->where('id_tutor_legal',$id_tutor_legal)
+            ->where('id_estudiante',$id_estudiante)->delete();
+
+            if($alumnoEliminado){
+                return response()->json(['message' => 'La vinculación con el tutorado se ha eliminado exitosamente.', 'status' => 200]);
+            }else{ // No existe vinculación entre el tutor legal y el alumno.
+                return response()->json(['message' => 'No existe vinculación entre el tutor y el alumno/tutorado.', 'status' => 400]);
+            }
+        }catch(Exeption $e){
+            return response()->json(['message' => 'Ha ocurrido un error.', 'status' => 500]);
+        }
+        
     }
 }

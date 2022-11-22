@@ -61,6 +61,8 @@ Route::prefix('v1')->group(function () {
     Route::post("tutor_legal/vincular", [TutorLegalAPIController::class,'store'] );
     Route::post('tutor_legal_docente/login', [AuthTutorLegalAndDocenteController::class, 'authenticate']);
     Route::get("tutor_legal/tutorados/{id_tutor_legal}", [TutorLegalAPIController::class,'showAll'] );
+    Route::delete("tutor_legal/{id_tutor}/{id_estudiante}", [TutorLegalAPIController::class,'deleteStudent'] );
+
 
 
     Route::prefix('v1')->group(function () {
