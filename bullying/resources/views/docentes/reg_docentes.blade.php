@@ -45,7 +45,7 @@
                     @endif
                     <div class="card-body">
                         <div class="form-group mb-3 row" >
-                            <label class="form-label" style="color:#001640; font-size:20px">1.- Crea un archivo cvs con la siguiente estructura:</label>
+                            <label class="form-label" style="color:#001640; font-size:20px">1.- Crea un archivo csv con la siguiente estructura:</label>
                         </div>
                     </div>
                     <div class="page-body">

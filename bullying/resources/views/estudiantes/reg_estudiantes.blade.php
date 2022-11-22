@@ -42,7 +42,7 @@
                     @endif
                     <div class="card-body">
                         <div class="form-group mb-3 row" >
-                            <label class="form-label" style="color:#001640; font-size:20px">1.- Crea un archivo cvs con la siguiente estructura:</label>
+                            <label class="form-label" style="color:#001640; font-size:20px">1.- Crea un archivo csv con la siguiente estructura:</label>
                         </div>
                     </div>
                     <div class="page-body">
@@ -58,7 +58,6 @@
                                                 <th>Nombre</th>
                                                 <th>Apellido paterno</th>
                                                 <th>Apellido materno</th>
-                                                <th>Contraseña</th>
                                                 <th>Fecha de nacimiento</th>
                                                 <th>Clave de la escuela</th>
                                                 </tr>
@@ -69,7 +68,6 @@
                                                 <td>Jose  </td>
                                                 <td > Salazar</td>
                                                 <td> Jimenez</td>
-                                                <td>Temporal </td>
                                                 <td>10/09/1999 </td>
                                                 <td>123456 </td>
                                                 </tr>
@@ -79,7 +77,6 @@
                                                 <td>Juan  </td>
                                                 <td > Dominguez</td>
                                                 <td> Yahoiu</td>
-                                                <td>Temporal </td>
                                                 <td>30/09/1999 </td>
                                                 <td>123456 </td>
                                                 </tr>
