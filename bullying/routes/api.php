@@ -47,6 +47,8 @@ Route::prefix('v1')->group(function () {
     Route::post("docente/reporte", [ReporteAPIController::class,'store'] );
     Route::put("docente/cambio_contrasenia", [DocentesAPIController::class,'cambiarContrasenia'] );
     Route::delete("docente/reporte/{id_reporte}",[ReporteAPIController::class,'destroy']);
+    Route::delete("docente/citatorio_eliminar/{id_citatorio}",[CitatorioAPIController::class,'destroy']);
+
 
     Route::get('reportes/estudiante/{id}',[ReporteAPIController::class,'showEstudiante']); // pendiente
 

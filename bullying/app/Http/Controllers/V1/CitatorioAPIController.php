@@ -81,6 +81,19 @@ class CitatorioAPIController extends Controller
         }
     }
 
+    public function destroy(Request $request,Citatorio $citatorio)
+    {
+        // Se obtiene obtine una respuesta al intentar eliminar un citatorio
+        $citatorioT= Citatorio::destroy($id_citatorio=($request->id_citatorio));
+        
+        // Se compara el resultado obtenido
+        if($citatorioT == 0){
+            return response() -> json("Hubo un error al eliminar el citatorio, intente más tarde");
+        }else{
+            return response() -> json("Eliminado con éxito");
+        }
+    }
+
 
     public function showCitatorio($id_citatorio)
     {
