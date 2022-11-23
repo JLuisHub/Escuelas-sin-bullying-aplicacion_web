@@ -7,7 +7,6 @@ use App\Models\Docentes;
 use Illuminate\Http\Request;
 use JWTAuth;
 use Illuminate\Support\Facades\Hash;
-use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Validator;
 
 class DocentesAPIController extends Controller

@@ -67,6 +67,7 @@ class TutorLegalAPIController extends Controller
     public function deleteStudent($id_tutor_legal,$id_estudiante)
     {
         try{
+
             $data = array(
                 'id_tutor_legal' => $id_tutor_legal,
                 'id_estudiante' => $id_estudiante,
@@ -79,7 +80,7 @@ class TutorLegalAPIController extends Controller
     
             //  Devolvemos un error si fallan las validaciones
             if ($validator->fails()) {
-                return response()->json(['message' => $validator->messages(), 'status' => Response::HTTP_BAD_REQUEST]);
+                return response()->json(['message' => $validator->messages(), 'status' => 400]);
             }
             
 

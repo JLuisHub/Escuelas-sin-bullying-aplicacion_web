@@ -4,7 +4,6 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Reporte;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\Citatorio;
@@ -17,7 +16,6 @@ use Illuminate\Support\Facades\DB;
 class CitatorioAPIController extends Controller
 {
     
-
 
     public function store(Request $request){
 
@@ -74,7 +72,7 @@ class CitatorioAPIController extends Controller
             return response()->json([
                 'message' => 'El citatorio se ha creado exitosamente.',
             ], Response::HTTP_OK);
-        } catch(exception $e) {
+        } catch(Exception $e) {
             return response()->json([
                 'message' => 'ocurrio un error al envíar el citatorio.',
             ], 400);

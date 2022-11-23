@@ -9,7 +9,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Symfony\Component\HttpFoundation\Response;
 use Exception;
 use PhpParser\Node\Stmt\TryCatch;
 
@@ -76,7 +75,7 @@ class AuthTutorLegalAndDocenteController extends Controller
                     }
                 }else{
                     return response()->json([
-                        'message' => 'Este correo aun no ha sido registrado',
+                        'message' => 'Este correo aún no ha sido registrado',
                         'status' => 400,
                     ],400);
                 }
