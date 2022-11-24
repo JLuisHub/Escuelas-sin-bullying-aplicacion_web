@@ -68,53 +68,79 @@ class EstudiantesController extends Controller
                 'El archivo seleccionado no es un archivo con extensión CSV. Por favor, seleccione un archivo nuevamente.'
             ]);
         }
-        
-        $file = file($request->file->getRealPath()); 
-        $data = array_slice($file,1); // Nos permite eliminar la primera linea del archivo
-        $datos =[];
-        $tamanio = count($data);
-        if($tamanio!=0){
-            for($i=0; $i<$tamanio; $i++){
-                $dato = $data[$i];
-                $columnas = explode(",",$dato);
-                $tam = count($columnas);
-                $bol = False;
-                $contador = 0;
-                for($j=0; $j<$tam; $j++){
-                    if(rtrim(ltrim($columnas[$j]))==""){
-                        $bol = true;
-                        $contador +=1;
-                    }
-                }
-                if($bol and $contador==6){
-                    //no se hace nada
-                }else if($bol and $contador <6){
-                    return back()->withErrors([
-                        'error' => "Hay columnas vacías en los registros, revise que todos los datos esten completos e intente nuevamente."
-                    ]);
-                }else{
-                    if(!existe_estudiante($columnas)){
-                        if(pertenece_escuela_alumno($columnas)){
-                            $datos[$i]=$columnas;
-                        }else{
-                            return back()->withErrors([
-                                'error' => "La clave de la escuela no es la misma a la de usted."
-                            ]);
-                        }
-                    }else{
-                        return back()->withErrors([
-                            'error' => "Hay registros ya existentes."
-                        ]);
-                    }
-                }
-            }
-        }else{
+
+        $archivoCSV = file($request->file->getRealPath()); 
+        $filas = array_slice($archivoCSV,1); // Nos permite eliminar la primera linea del archivo
+        $filasLimpias =[];
+        $numFilas = count($filas);
+        $numFilaActual = 2;
+
+        if($numFilas == 0){
             return back()->withErrors([
-                'error' => "El archivo ingresado no contiene registros"
+                'error' => "El archivo proporcionado está vacío."
             ]);
         }
 
-        $mensaje = (new Estudiantes())->guardarEstudiantes($datos);
+        foreach($filas as $filaActual){
+            // Cada fila la separamos por columnas
+            $columnasFilaActual = explode(",",$filaActual);
+
+            if( count($columnasFilaActual) < 7 ){
+                return back()->withErrors([
+                    'error' => "El archivo proporcionado contiene menos de 7 columnas"
+                ]);
+            }else{ // El archivo contiene 7 o más columnas
+
+                $numColumnasVacias = 0;
+                $numColumnasConDatos = 0;
+                $numero_col = 0;
+
+                // Recorremos las primeras 7 columnas de la fila actual.
+                // y cuenta el número de columnas vacias y columnas con datos.
+                foreach($columnasFilaActual as $columnaActualFilaActual){
+                    if($numero_col==7){
+                        break;
+                    }
+                    if( rtrim(ltrim($columnaActualFilaActual)) == "" ){
+                        $numColumnasVacias += 1;
+                    }else{
+                        $numColumnasConDatos += 1;
+                    }
+                    $numero_col += 1;
+                }
+
+                if($numColumnasVacias<7){ // es una fila que puede contener columnas vacias
+
+                    if( $numColumnasConDatos >= 1 && $numColumnasVacias >= 1 ){
+                        return back()->withErrors([
+                            'error' => "En la fila " . $numFilaActual . " hay columnas vacías, revise que todos los datos esten completos e intente nuevamente."
+                        ]);
+                    }
+
+                    if( rtrim(ltrim($columnasFilaActual[6])) != Auth::user()->clave ){
+                        return back()->withErrors([
+                            'error' => "En la fila " . $numFilaActual . " la clave de la escuela en el archivo no es la misma a la de usted."
+                        ]);
+                    }              
+
+                    if( existe_estudiante($columnasFilaActual) ){
+                        return back()->withErrors([
+                            'error' => "En la fila " . $numFilaActual . " esa matícula ya le pertenece a un estudiante."
+                        ]);
+                    }
+    
+                    if($numColumnasConDatos==7 && $numColumnasVacias==0){
+                        array_push($filasLimpias,$columnasFilaActual);
+                    }
+
+                }                
+            }
+
+            $numFilaActual += 1;
+        }
+
+
+        $mensaje = (new Estudiantes())->guardarEstudiantes($filasLimpias);
         return back()->withErrors([
             'error' => $mensaje
         ]);

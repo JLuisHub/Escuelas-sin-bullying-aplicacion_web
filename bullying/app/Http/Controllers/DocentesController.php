@@ -112,18 +112,17 @@ class DocentesController extends Controller
 
                 if($numColumnasVacias<7){ // es una fila que puede contener columnas vacias
 
-                    if( rtrim(ltrim($columnasFilaActual[6])) != Auth::user()->clave ){
-                        return back()->withErrors([
-                            'error' => "En la fila " . $numFilaActual . " la clave de la escuela en el archivo no es la misma a la de usted."
-                        ]);
-                    }
-    
                     if( $numColumnasConDatos >= 1 && $numColumnasVacias >= 1 ){
                         return back()->withErrors([
                             'error' => "En la fila " . $numFilaActual . " hay columnas vacías, revise que todos los datos esten completos e intente nuevamente."
                         ]);
                     }
-                    
+
+                    if( rtrim(ltrim($columnasFilaActual[6])) != Auth::user()->clave ){
+                        return back()->withErrors([
+                            'error' => "En la fila " . $numFilaActual . " la clave de la escuela en el archivo no es la misma a la de usted."
+                        ]);
+                    }
 
                     if(existe_docente($columnasFilaActual) || existe_correo($columnasFilaActual)){
                         return back()->withErrors([
@@ -146,58 +145,6 @@ class DocentesController extends Controller
         return back()->withErrors([
             'error' => $mensaje
         ]);
-
-        /*
-        if($tamanio!=0){
-            for($i=0; $i<$tamanio; $i++){
-                $dato = $data[$i];
-                $columnas = explode(",",$dato);
-                $tam = count($columnas);
-                $bol = False;
-                $contador = 0;
-                for($j=0; $j<$tam; $j++){
-                    if(ltrim(rtrim($columnas[$j])=="")){
-                        $bol = true;
-                        $contador +=1;
-                    }
-                }
-                if($bol and $contador==7){
-                    //no se hace nada
-                }else if($bol and $contador <7){
-                    return back()->withErrors([
-                        'error' => "Hay columnas vacías en los registros, revise que todos los datos esten completos e intente nuevamente."
-                    ]);
-                }else{
-                    if(!existe_docente($columnas) and !existe_correo($columnas)){
-                        if(pertenece_escuela($columnas)){
-                            $datos[$i]=$columnas;
-                        }else{
-                            return back()->withErrors([
-                                'error' => "La clave de la escuela no es la misma a la de usted."
-                            ]);
-                        }
-                    }else{
-                        return back()->withErrors([
-                            'error' => "Hay registros ya existentes."
-                        ]);
-                    }
-                }
-            }
-        }else{
-            return back()->withErrors([
-                'error' => "El archivo ingresado no contiene registros."
-            ]);
-        }
-
-        dd($datos);
-
-        $mensaje = (new Docentes())->guardarDocentes($datos);
-        return back()->withErrors([
-            'error' => $mensaje
-        ]);
-
-        */
-
 
     }
     
