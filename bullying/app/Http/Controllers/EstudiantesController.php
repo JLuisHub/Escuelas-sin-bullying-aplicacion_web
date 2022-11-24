@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Estudiantes;
+use App\Models\Reporte;
+use App\Models\Citatorio;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -174,9 +176,10 @@ class EstudiantesController extends Controller
      * @param  \App\Models\Estudiantes  $estudiantes
      * @return \Illuminate\Http\Response
      */
-    public function edit(Estudiantes $estudiantes)
+    public function edit($id)
     {
-        //
+        $estudiante = Estudiantes::findOrFail($id);
+        return view('estudiantes.edit', compact('estudiante'));
     }
 
     /**
@@ -186,9 +189,34 @@ class EstudiantesController extends Controller
      * @param  \App\Models\Estudiantes  $estudiantes
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Estudiantes $estudiantes)
+
+    public function update(Request $request, $id)
     {
-        //
+        $nombre = $request->nombre;
+        $apaterno = $request->aPaterno;
+        $amaterno = $request->aMaterno;
+        $fecha =  str_replace('/','', rtrim(ltrim($request->FechaNac)));
+        $fecha =  str_replace('-','', rtrim(ltrim($fecha)));
+        if($nombre== null or $apaterno == null or $amaterno == null or $fecha==null){
+            return back()->withErrors([
+                                    'error' => "Hay campos vacios."
+                                ]);
+        }
+        try{
+                    $estudiante = Estudiantes::find($id);
+                    $estudiante->Nombre = $nombre;
+                    $estudiante->Apaterno = $apaterno;
+                    $estudiante->Amaterno = $amaterno;
+                    $estudiante->FechaNac = $fecha;
+                    $estudiante->save();
+                    return back()->withErrors([
+                                    'error' => "Se han editado correctamente los datos del docente."
+                                ]);
+                }catch(exception $e){
+                    return back()->withErrors([
+                                    'error' => "Hubo un error al editar los datos del usuario, intente más tarde."
+                                ]);
+                }
     }
 
     /**
@@ -197,8 +225,23 @@ class EstudiantesController extends Controller
      * @param  \App\Models\Estudiantes  $estudiantes
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Estudiantes $estudiantes)
+
+    public function destroy($id)
     {
-        //
+        // Se obtiene obtine una respuesta al intentar eliminar un citatorio
+        $reportes =  Reporte::where('id_estudiante', $id)->delete(); 
+        $citatorios = Citatorio::where('id_estudiante', $id)->delete(); 
+         $estudianteT= Estudiantes::destroy($id=($id));
+        
+        // Se compara el resultado obtenido
+        if($estudianteT == 0){
+            return back()->withErrors([
+                            'error' => "Hubo un error al eliminar el docente, intente más tarde."
+                        ]);
+        }else{
+            return back()->withErrors([
+                            'error' => "Eliminado con éxito."
+                        ]);
+        }
     }
 }

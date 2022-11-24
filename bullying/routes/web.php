@@ -42,5 +42,7 @@ Route::resource('tutor_legal/registro', 'App\Http\Controllers\V1\AuthTutorLegalC
 
 Route::get('docentes/reportes/{id}',[DocentesController::class,'show']);
 Route::get('estudiantes/reportes/{id}',[EstudiantesController::class,'show']);
+Route::get('docentes/eliminar/{id}',[DocentesController::class,'destroy']);
+Route::get('estudiantes/eliminar/{id}',[EstudiantesController::class,'destroy']
 Route::resource('estudiantes','App\Http\Controllers\EstudiantesController');
 Route::get('busqueda', [ReporteController::class, 'busqueda']);

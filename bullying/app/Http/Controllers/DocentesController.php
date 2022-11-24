@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Docentes;
+use App\Models\Reporte;
+use App\Models\Citatorio;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -170,15 +172,10 @@ class DocentesController extends Controller
         }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Docentes  $docentes
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Docentes $docentes)
+    public function edit($id)
     {
-        //
+        $docente = Docentes::findOrFail($id);
+        return view('docentes.edit', compact('docente'));
     }
 
     /**
@@ -188,9 +185,48 @@ class DocentesController extends Controller
      * @param  \App\Models\Docentes  $docentes
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Docentes $docentes)
+    public function update(Request $request, $id)
     {
-        //
+        $nombre = $request->nombre;
+        $apaterno = $request->aPaterno;
+        $amaterno = $request->aMaterno;
+        $email = $request->email;
+        $contrasenia = $request->password;
+        $contrasenia_2 = $request->passwordConfirm;
+        if($nombre== null or $apaterno == null or $amaterno == null or $email==null or $contrasenia== null or $contrasenia_2==null){
+            return back()->withErrors([
+                                    'error' => "Hay campos vacios."
+                                ]);
+        }
+        if($contrasenia == $contrasenia_2){
+            $docente = DB::table('docentes')->where('email', $email)->get()->first();
+            if($docente->id == $id){
+                try{
+                    $docentes = Docentes::find($id);
+                    $docentes->Nombre = $nombre;
+                    $docentes->Apaterno = $apaterno;
+                    $docentes->Amaterno = $amaterno;
+                    $docentes->email = $email;
+                    $docentes->password= Hash::make($contrasenia);
+                    $docentes->save();
+                    return back()->withErrors([
+                                    'error' => "Se han editado correctamente los datos del docente."
+                                ]);
+                }catch(exception $e){
+                    return back()->withErrors([
+                                    'error' => "Hubo un error al editar los datos del usuario, intente más tarde."
+                                ]);
+                }
+            }else{
+                return back()->withErrors([
+                            'error' => "Ese correo no está disponible.".$docente->id .$id
+                        ]);
+            }
+        }else{
+            return back()->withErrors([
+                            'error' => "Las contraseñas no coínciden."
+                        ]);
+        }
     }
 
     /**
@@ -199,8 +235,22 @@ class DocentesController extends Controller
      * @param  \App\Models\Docentes  $docentes
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Docentes $docentes)
+    public function destroy($id)
     {
-        //
+        // Se obtiene obtine una respuesta al intentar eliminar un citatorio
+        $reportes =  Reporte::where('id_docente', $id)->delete(); 
+        $citatorios = Citatorio::where('id_docente', $id)->delete(); 
+         $docenteT= Docentes::destroy($id=($id));
+        
+        // Se compara el resultado obtenido
+        if($docenteT == 0){
+            return back()->withErrors([
+                            'error' => "Hubo un error al eliminar el docente, intente más tarde."
+                        ]);
+        }else{
+            return back()->withErrors([
+                            'error' => "Eliminado con éxito."
+                        ]);
+        }
     }
 }
