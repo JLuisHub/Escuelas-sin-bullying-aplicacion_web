@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Exception;
+use Illuminate\Support\Facades\Hash;
+
 
 class DocentesController extends Controller
 {
@@ -49,6 +52,7 @@ class DocentesController extends Controller
      **/
     public function store(Request $request)
     {
+        
         //  Comprueba si el usuario esta logeado
         if(!Auth::check()){
             return view('auth.login');
@@ -65,10 +69,85 @@ class DocentesController extends Controller
                 'El archivo seleccionado no es un archivo con extensión CSV. Por favor, seleccione un archivo nuevamente.'
             ]);
         }
-        $file = file($request->file->getRealPath()); 
-        $data = array_slice($file,1); // Nos permite eliminar la primera linea del archivo
-        $datos =[];
-        $tamanio = count($data);
+
+        $archivoCSV = file($request->file->getRealPath()); 
+        $filas = array_slice($archivoCSV,1); // Nos permite eliminar la primera linea del archivo
+        $filasLimpias =[];
+        $numFilas = count($filas);
+        $numFilaActual = 2;
+
+        if($numFilas == 0){
+            return back()->withErrors([
+                'error' => "El archivo proporcionado está vacío."
+            ]);
+        }
+
+        foreach($filas as $filaActual){
+            // Cada fila la separamos por columnas
+            $columnasFilaActual = explode(",",$filaActual);
+
+            if( count($columnasFilaActual) < 7 ){
+                return back()->withErrors([
+                    'error' => "El archivo proporcionado contiene menos de 7 columnas"
+                ]);
+            }else{ // El archivo contiene 7 o más columnas
+
+                $numColumnasVacias = 0;
+                $numColumnasConDatos = 0;
+                $numero_col = 0;
+
+                // Recorremos las primeras 7 columnas de la fila actual.
+                // y cuenta el número de columnas vacias y columnas con datos.
+                foreach($columnasFilaActual as $columnaActualFilaActual){
+                    if($numero_col==7){
+                        break;
+                    }
+                    if( rtrim(ltrim($columnaActualFilaActual)) == "" ){
+                        $numColumnasVacias += 1;
+                    }else{
+                        $numColumnasConDatos += 1;
+                    }
+                    $numero_col += 1;
+                }
+
+                if($numColumnasVacias<7){ // es una fila que puede contener columnas vacias
+
+                    if( rtrim(ltrim($columnasFilaActual[6])) != Auth::user()->clave ){
+                        return back()->withErrors([
+                            'error' => "En la fila " . $numFilaActual . " la clave de la escuela en el archivo no es la misma a la de usted."
+                        ]);
+                    }
+    
+                    if( $numColumnasConDatos >= 1 && $numColumnasVacias >= 1 ){
+                        return back()->withErrors([
+                            'error' => "En la fila " . $numFilaActual . " hay columnas vacías, revise que todos los datos esten completos e intente nuevamente."
+                        ]);
+                    }
+                    
+
+                    if(existe_docente($columnasFilaActual) || existe_correo($columnasFilaActual)){
+                        return back()->withErrors([
+                            'error' => "En la fila " . $numFilaActual . " ese la matícula o el correo del docente ya esta registrado."
+                        ]);
+                    }
+    
+                    if($numColumnasConDatos==7 && $numColumnasVacias==0){
+                        array_push($filasLimpias,$columnasFilaActual);
+                    }
+
+                }                
+            }
+
+            $numFilaActual += 1;
+        }
+
+
+        $mensaje = (new Docentes())->guardarDocentes($filasLimpias);
+        return back()->withErrors([
+            'error' => $mensaje
+        ]);
+
+        /*
         if($tamanio!=0){
             for($i=0; $i<$tamanio; $i++){
                 $dato = $data[$i];
@@ -77,7 +156,7 @@ class DocentesController extends Controller
                 $bol = False;
                 $contador = 0;
                 for($j=0; $j<$tam; $j++){
-                    if(rtrim($columnas[$j])==""){
+                    if(ltrim(rtrim($columnas[$j])=="")){
                         $bol = true;
                         $contador +=1;
                     }
@@ -110,10 +189,16 @@ class DocentesController extends Controller
             ]);
         }
 
+        dd($datos);
+
         $mensaje = (new Docentes())->guardarDocentes($datos);
         return back()->withErrors([
             'error' => $mensaje
         ]);
+
+        */
+
+
     }
     
     /**

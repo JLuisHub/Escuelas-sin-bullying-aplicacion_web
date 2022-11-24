@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Exception;
 
 
 class Docentes extends Authenticatable implements JWTSubject
@@ -19,15 +20,20 @@ class Docentes extends Authenticatable implements JWTSubject
 
     public function guardarDocentes($docentes){
         foreach($docentes as $dato_docente){
-            $docente = new Docentes();
-            $docente->Matricula = rtrim(ltrim($dato_docente[0]));
-            $docente->Nombre = rtrim(ltrim($dato_docente[1]));
-            $docente->Apaterno = rtrim(ltrim($dato_docente[2]));
-            $docente->Amaterno = rtrim(ltrim($dato_docente[3]));
-            $docente->password = Hash::make(rtrim(ltrim($dato_docente[4])));
-            $docente->email = rtrim(ltrim($dato_docente[5]));
-            $docente->clave = rtrim(ltrim($dato_docente[6]));
-            $docente->save();
+            try{
+                $docente = new Docentes();
+                $docente->Matricula = rtrim(ltrim($dato_docente[0]));
+                $docente->Nombre = rtrim(ltrim($dato_docente[1]));
+                $docente->Apaterno = rtrim(ltrim($dato_docente[2]));
+                $docente->Amaterno = rtrim(ltrim($dato_docente[3]));
+                $docente->password = Hash::make(rtrim(ltrim($dato_docente[4])));
+                $docente->email = rtrim(ltrim($dato_docente[5]));
+                $docente->clave = rtrim(ltrim($dato_docente[6]));
+                $docente->save();
+            } catch(Exeption $e){
+                return $e;
+            }
+            
         }
         return "Se han guardado exitosamente los registros";
     }
