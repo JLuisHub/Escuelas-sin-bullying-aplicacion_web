@@ -22,6 +22,12 @@
 <div class="container">
     <div class="row justify-content-center">
         <div >
+             @if ( session('errors') )
+                <div class="alert alert-warning " role="alert">
+                    <strong>  {{ session('errors')->first('error') }} 
+                    </strong>
+                </div>
+            @endif
             <div class="card" style="min-width: 280px ">
                 <div class="card-header">
                     <div class="row g-2 align-items-center" >
@@ -53,6 +59,8 @@
                             <tr>
                             <th>Matrícula</th>
                             <th>Nombre</th>
+                            <th>Opciones</th>
+                            <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -62,6 +70,32 @@
                                     <a href="{{url('estudiantes/reportes',$estudiante -> id )}}" style="background-color:#001640; border-radius: 5px; font-size:12px"  type="submit" class="btn btn-primary w-100"> {{$estudiante -> Matricula }}</a>
                                 </td >
                                 <td >{{$estudiante -> Nombre }} {{$estudiante -> Apaterno }} {{$estudiante -> Amaterno }}</td >
+                                <td>
+                                    <form method="GET" action="{{ url('estudiantes/eliminar', $estudiante -> id ) }}">
+                                        <button type="submit" style="background-color:#001640; border-radius: 5px; font-size:12px; color: white;">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash-x" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                               <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                               <path d="M4 7h16"></path>
+                                               <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"></path>
+                                               <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"></path>
+                                               <path d="M10 12l4 4m0 -4l-4 4"></path>
+                                            </svg>
+                                            Eliminar
+                                        </button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <a href="{{url('estudiantes/'.$estudiante -> id.'/edit')}}" type="submit" style="background-color:#001640; border-radius: 5px; font-size:12px; color: white;" class="btn btn-primary">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-file-pencil" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                           <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                           <path d="M14 3v4a1 1 0 0 0 1 1h4"></path>
+                                           <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z"></path>
+                                           <path d="M10 18l5 -5a1.414 1.414 0 0 0 -2 -2l-5 5v2h2z"></path>
+                                        </svg>
+                                        Editar
+                                    </a>   
+                                </td>
+
                             </tr>
                         @endforeach
                         </tbody>
